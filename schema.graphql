@@ -3,13 +3,14 @@
 
 type Query {
     me: User
-    other: User
+    other(id: Int): User
     milongas(id: Int, after: String, first: Int): [Milonga]
 }
 
 type User {
     id: ID
     name: String
+    avatar(size: Int): String
 }
 
 type Milonga {

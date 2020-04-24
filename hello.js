@@ -8,11 +8,17 @@ const { buildSchema } = require('graphql');
 const schema = readFileSync("schema.graphql", "UTF8");
 
 
+
 let handler = {
     get(target, name) {
         if (name === 'milongas') {
             return (args, context, info) => {
-                // code here
+                // TODO ---------------------------------------------------------------------------
+                // TODO Parsear info > operation > selectionSet > selections[n] > selectionSet ...
+                // TODO convertir a JSON?
+                // TODO ---------------------------------------------------------------------------
+                console.log("ARGS: " + JSON.stringify(args, null, 2));
+                console.log("INFO: " +  JSON.stringify(info, null, 2));
                 return [
                     {id: args.id ? args.id : 99, name: "zzzzz"},
                     {id: `1`, name: "El Beso", address: "Riobamba 416"},
