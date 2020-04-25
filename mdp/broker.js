@@ -1,6 +1,6 @@
 const {Router} = require("zeromq");
-const {Service} = require("./service");
-const {Header, Message} = require("./types");
+const Service = require("./service");
+const MDP = require("./mdp");
 
 
 class Broker {
@@ -23,10 +23,10 @@ class Broker {
         const loop = async () => {
             for await (const [sender, blank, header, ...rest] of this.socket) {
                 switch (header.toString()) {
-                    case Header.Client:
+                    case MDP.CLIENT:
                         this.handleClient(sender, ...rest);
                         break;
-                    case Header.Worker:
+                    case MDP.WORKER:
                         this.handleWorker(sender, ...rest);
                         break;
                     default:
@@ -51,23 +51,23 @@ class Broker {
 
     handleWorker(worker, type, ...rest) {
         switch (type && type.toString()) {
-            case Message.Ready: {
+            case MDP.READY: {
                 const [service] = rest;
                 this.register(worker, service);
                 break
             }
 
-            case Message.Reply: {
+            case MDP.REPLY: {
                 const [client, blank, ...rep] = rest;
                 this.dispatchReply(worker, client, ...rep);
                 break
             }
 
-            case Message.Heartbeat:
+            case MDP.HEARTBEAT:
                 /* Heartbeats not implemented yet. */
                 break;
 
-            case Message.Disconnect:
+            case MDP.DISCONNECT:
                 this.deregister(worker);
                 break;
 

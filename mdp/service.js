@@ -1,5 +1,5 @@
 const {Router} = require("zeromq");
-const {Header, Message} = require("./types");
+const MDP = require("./mdp");
 
 
 class Service {
@@ -26,7 +26,7 @@ class Service {
             `dispatching '${this.name}' ` +
             `${client.toString("hex")} <- rep ${worker.toString("hex")}`,
         );
-        await this.socket.send([client, null, Header.Client, this.name, ...rep]);
+        await this.socket.send([client, null, MDP.CLIENT, this.name, ...rep]);
         this.dispatchPending()
     }
 
@@ -44,8 +44,8 @@ class Service {
             await this.socket.send([
                 worker,
                 null,
-                Header.Worker,
-                Message.Request,
+                MDP.WORKER,
+                MDP.REQUEST,
                 client,
                 null,
                 ...req,

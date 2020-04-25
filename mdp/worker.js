@@ -1,5 +1,5 @@
 const {Dealer} = require("zeromq");
-const {Header, Message} = require("./types");
+const MDP = require("./mdp");
 
 
 class Worker {
@@ -12,7 +12,7 @@ class Worker {
     }
 
     async start() {
-        await this.socket.send([null, Header.Worker, Message.Ready, this.service]);
+        await this.socket.send([null, MDP.WORKER, MDP.READY, this.service]);
 
         const loop = async () => {
             for await (const [blank1, header, type, client, blank2, ...req] of this.socket) {
@@ -20,8 +20,8 @@ class Worker {
                 try {
                     await this.socket.send([
                         null,
-                        Header.Worker,
-                        Message.Reply,
+                        MDP.WORKER,
+                        MDP.REPLY,
                         client,
                         null,
                         ...rep,
@@ -38,8 +38,8 @@ class Worker {
         if (!this.socket.closed) {
             await this.socket.send([
                 null,
-                Header.Worker,
-                Message.Disconnect,
+                MDP.WORKER,
+                MDP.DISCONNECT,
                 this.service,
             ]);
             this.socket.close()

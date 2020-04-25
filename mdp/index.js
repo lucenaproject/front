@@ -1,6 +1,6 @@
 const {Request} = require("zeromq");
-const {Worker} = require("./worker");
-const {Broker} = require("./broker");
+const Worker = require("./worker");
+const Broker = require("./broker");
 
 
 async function sleep(msec) {
@@ -9,11 +9,7 @@ async function sleep(msec) {
 
 
 class TeaWorker extends Worker {
-    service = "mdp-echo";
-
-    constructor(address="tcp://127.0.0.1:5555") {
-        super(address);
-    }
+    service = "tea";
 
     async process(...msgs) {
         await sleep(Math.random() * 500);
@@ -23,11 +19,7 @@ class TeaWorker extends Worker {
 
 
 class CoffeeWorker extends Worker {
-    service = "mdp-echo";
-
-    constructor(address="tcp://127.0.0.1:5555") {
-        super(address);
-    }
+    service = "coffee";
 
     async process(...msgs) {
         await sleep(Math.random() * 200);
@@ -37,7 +29,12 @@ class CoffeeWorker extends Worker {
 
 
 const broker = new Broker();
-const workers = [new TeaWorker(), new CoffeeWorker(), new TeaWorker()];
+
+const workers = [
+    new TeaWorker(),
+    new CoffeeWorker(),
+    new TeaWorker()
+];
 
 
 async function request(service, ...req) {
@@ -57,10 +54,12 @@ async function request(service, ...req) {
 
 
 async function main() {
-    for (const worker of workers) worker.start()
+    for (const worker of workers) {
+        worker.start();
+    }
     broker.start();
 
-    /* Requests are issued in parallel. */
+    // Requests are issued in parallel.
     await Promise.all([
         request("soda", "cola"),
         request("tea", "oolong"),
