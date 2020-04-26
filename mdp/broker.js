@@ -4,10 +4,6 @@ const MDP = require("./mdp");
 
 
 class Broker {
-    // let address;
-    // socket: Router = new Router({sendHighWaterMark: 1, sendTimeout: 1})
-    // services: Map<string, Service> = new Map()
-    // workers: Map<string, Buffer> = new Map()
 
     constructor(address = "tcp://127.0.0.1:5555") {
         this.socket = new Router({sendHighWaterMark: 1, sendTimeout: 1});

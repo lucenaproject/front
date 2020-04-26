@@ -1,4 +1,4 @@
-const {Request} = require("zeromq");
+const {Dealer, Request} = require("zeromq");
 const Worker = require("./worker");
 const Broker = require("./broker");
 
@@ -38,10 +38,10 @@ const workers = [
 
 
 async function request(service, ...req) {
-    const socket = new Request({receiveTimeout: 2000});
+    const socket = new Dealer({receiveTimeout: 20000});
     socket.connect(broker.address);
     console.log(`requesting '${req.join(", ")}' from '${service}'`);
-    await socket.send(["MDPC02", service, ...req]);
+    await socket.send(["", "MDPC02", service, ...req]);
 
     try {
         const [blank, header, ...res] = await socket.receive();
@@ -54,26 +54,27 @@ async function request(service, ...req) {
 
 
 async function main() {
-    for (const worker of workers) {
-        worker.start();
-    }
-    broker.start();
+    // for (const worker of workers) {
+    //     worker.start();
+    // }
+    // broker.start();
 
     // Requests are issued in parallel.
     await Promise.all([
         request("soda", "cola"),
-        request("tea", "oolong"),
-        request("tea", "sencha"),
-        request("tea", "earl grey", "with milk"),
-        request("tea", "jasmine"),
-        request("coffee", "cappuccino"),
-        request("coffee", "latte", "with soy milk"),
-        request("coffee", "espresso"),
-        request("coffee", "irish coffee"),
+        // request("tea", "oolong"),
+        // request("tea", "sencha"),
+        // request("tea", "earl grey", "with milk"),
+        // request("tea", "jasmine"),
+        // request("coffee", "cappuccino"),
+        // request("coffee", "latte", "with soy milk"),
+        // request("coffee", "espresso"),
+        // request("coffee", "irish coffee"),
+
     ]);
 
-    for (const worker of workers) worker.stop()
-    broker.stop()
+    // for (const worker of workers) worker.stop()
+    // broker.stop()
 }
 
 
